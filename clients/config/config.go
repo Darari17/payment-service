@@ -1,4 +1,4 @@
-package clients
+package config
 
 import "github.com/parnurzeal/gorequest"
 
@@ -8,7 +8,7 @@ type ClientConfig struct {
 	signatureKey string
 }
 
-type IClienConfig interface {
+type IClientConfig interface {
 	Client() *gorequest.SuperAgent
 	BaseURL() string
 	SignatureKey() string
@@ -16,9 +16,11 @@ type IClienConfig interface {
 
 type Option func(*ClientConfig)
 
-func NewClientConfig(options ...Option) IClienConfig {
+func NewClientConfig(options ...Option) IClientConfig {
 	clientConfig := &ClientConfig{
-		client: gorequest.New().Set("Content-Type", "appliaction/json").Set("Accept", "application/json"),
+		client: gorequest.New().
+			Set("Content-Type", "application/json").
+			Set("Accept", "application/json"),
 	}
 	for _, option := range options {
 		option(clientConfig)
@@ -26,9 +28,17 @@ func NewClientConfig(options ...Option) IClienConfig {
 	return clientConfig
 }
 
-func (c *ClientConfig) Client() *gorequest.SuperAgent { return c.client }
-func (c *ClientConfig) BaseURL() string               { return c.baseURL }
-func (c *ClientConfig) SignatureKey() string          { return c.signatureKey }
+func (c *ClientConfig) Client() *gorequest.SuperAgent {
+	return c.client
+}
+
+func (c *ClientConfig) BaseURL() string {
+	return c.baseURL
+}
+
+func (c *ClientConfig) SignatureKey() string {
+	return c.signatureKey
+}
 
 func WithBaseURL(baseURL string) Option {
 	return func(c *ClientConfig) {
